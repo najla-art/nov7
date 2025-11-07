@@ -34,7 +34,7 @@ jobs:
       <servers>
         <server>
           <id>github</id>
-          <username>${env.GITHUB_USER}</username>
+          <username>${env.NEW_USER}</username>
           <password>${env.PASSWORD}</password>
         </server>
       </servers>
