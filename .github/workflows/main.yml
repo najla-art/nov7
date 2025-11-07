@@ -40,4 +40,4 @@ jobs:
         run: mvn clean verify
 
       - name: Deploy to GitHub Packages
-        run: mvn deploy -X
+        run: mvn -B -ntp -DskipTests deploy
