@@ -1,1 +1,40 @@
+name: Maven Build and Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ✅ Step 1: Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ✅ Step 2: Set up Java 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # ✅ Step 3: Configure Maven settings (authentication for GitHub Packages)
+      - name: Configure Maven settings
+        run: |
+          mkdir -p ~/.m2
+          cp .github/maven/settings.xml ~/.m2/settings.xml
+
+      # ✅ Step 4: Build and test
+      - name: Build with Maven
+        run: mvn clean verify
+
+      # ✅ Step 5: Deploy to GitHub Packages
+      - name: Deploy package
+        env:
+          GITHUB_TOKEN: ${{ secrets.PASSWORD }} # or use your PAT secret
+        run: mvn deploy
 
