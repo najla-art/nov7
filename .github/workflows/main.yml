@@ -22,25 +22,27 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # ✅ Step 3: Configure Maven settings (authentication for GitHub Packages)
+      # ✅ Step 3: Configure Maven settings (use your username and PAT secret)
       - name: Configure Maven settings
-  run: |
-    mkdir -p ~/.m2
-    cat > ~/.m2/settings.xml <<'EOF'
-    <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 
-              https://maven.apache.org/xsd/settings-1.0.0.xsd">
-      <servers>
-        <server>
-          <id>github</id>
-          <username>${env.NEW_USER}</username>
-          <password>${env.PASSWORD}</password>
-        </server>
-      </servers>
-    </settings>
-    EOF
-
+        env:
+          USERNAME: NEW_USER
+          PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 
+                    https://maven.apache.org/xsd/settings-1.0.0.xsd">
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${USERNAME}</username>
+                <password>${PASSWORD}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
 
       # ✅ Step 4: Build and test
       - name: Build with Maven
@@ -49,6 +51,6 @@ jobs:
       # ✅ Step 5: Deploy to GitHub Packages
       - name: Deploy package
         env:
-          GITHUB_TOKEN: ${{ secrets.PASSWORD }} # or use your PAT secret
+          NEW_USER: NEW_USER
+          PASSWORD: ${{ secrets.PASSWORD }}
         run: mvn deploy
-
